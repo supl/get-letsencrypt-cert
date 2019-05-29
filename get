@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DOMAIN=$1
+
+if [ -z "$DOMAIN" ]; then
+    echo "usage: get <domain>"
+    exit;
+fi
+
+docker run --rm -d --name nginx -v /tmp:/usr/share/nginx/html:rw nginx > /dev/null
+wait;
+sudo certbot certonly --webroot -w /tmp -d $DOMAIN
+docker rm -f nginx > /dev/null
