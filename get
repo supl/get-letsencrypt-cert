@@ -7,7 +7,7 @@ if [ -z "$DOMAIN" ]; then
     exit;
 fi
 
-docker run --rm -d --name nginx -v /tmp:/usr/share/nginx/html:rw nginx > /dev/null
+docker run --rm -p 80:80 -d --name nginx -v /tmp:/usr/share/nginx/html:rw nginx > /dev/null
 wait;
 sudo certbot certonly --webroot -w /tmp -d $DOMAIN
 docker rm -f nginx > /dev/null
