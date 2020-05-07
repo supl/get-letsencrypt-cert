@@ -7,7 +7,15 @@ if [ -z "$DOMAIN" ]; then
     exit;
 fi
 
+TEMP=$(mktemp -d 2> /dev/null)
+
+if [ -z "$TEMP" ]; then
+    echo "It seems that you don't have \`mktemp\`"
+    exit;
+fi
+
 docker run --rm -p 80:80 -d --name nginx -v /tmp:/usr/share/nginx/html:rw nginx > /dev/null
 wait;
-sudo certbot certonly --webroot -w /tmp -d $DOMAIN
+docker run -it --rm --name certbot -v /tmp:/hosttmp -v $TEMP:/etc/letsencrypt:rw certbot/certbot certonly --webroot -w /hosttmp -d $DOMAIN
 docker rm -f nginx > /dev/null
+echo "You ca find the certificate and key in $TEMP"
